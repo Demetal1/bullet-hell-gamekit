@@ -10,6 +10,16 @@ public class StraightPattern : Pattern
 
     public float speed = 5f;
 
+    public override void InitializePattern(BulletObject objectPool)
+    {
+        objectPool.bullet.SetLineDirection(rotation);
+    }
+
+    public override void InitializePattern(Enemy enemy)
+    {
+        enemy.enemyBehaviour.SetLineDirection(rotation);
+    }
+
     public override Vector2 CalculateMovement(Enemy enemy)
     {
         //Debug.LogWarning("Straight Pattern is not implemented for enemies");
@@ -23,6 +33,6 @@ public class StraightPattern : Pattern
 
     public Vector2 Straight(BulletObject objectPool)
     {
-        return objectPool.bullet.GetSettedDirection() * speed * Time.deltaTime;
+        return objectPool.bullet.GetDirection() * speed * Time.deltaTime;
     }
 }

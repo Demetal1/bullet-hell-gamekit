@@ -10,8 +10,8 @@ public class CircularPattern : Pattern
 
     public float width = 1f;
     public float height = 1f;
-    [Tooltip("1 to move clockwise, -1 to move counter-clockwise")]
-    public int direction = 1;
+    [Tooltip("positive to move clockwise, negative to move counter-clockwise")]
+    public int speed = 1;
 
     public override Vector2 CalculateMovement(Enemy enemy)
     {
@@ -20,7 +20,7 @@ public class CircularPattern : Pattern
 
     public Vector2 Circular(Enemy enemy)
     {
-        return new Vector2(CalculateX(enemy) , CalculateY(enemy)) * direction;
+        return new Vector2(CalculateX(enemy) , CalculateY(enemy)) * speed;
     }
 
     private float CalculateX(Enemy enemy)

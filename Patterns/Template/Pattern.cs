@@ -12,6 +12,13 @@ public enum PatternType
 
 public class Pattern : ScriptableObject
 {
+    [Range(0,359)]
+    public float rotation;
+
+    public virtual void InitializePattern(Enemy enemy){}
+
+    public virtual void InitializePattern(BulletObject bulletObject){}
+    
     public virtual Vector2 CalculateMovement(Enemy enemy)
     { 
         Debug.LogWarning("Pattern is not implemented for Enemy");

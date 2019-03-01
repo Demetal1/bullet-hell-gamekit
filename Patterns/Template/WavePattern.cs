@@ -12,6 +12,8 @@ public class WavePattern : Pattern
     public float magnitude = 0.5f;
     public float speed = 2f;
 
+    
+
     public override Vector2 CalculateMovement(Enemy enemy)
     {
         return Wave(enemy);
@@ -24,17 +26,23 @@ public class WavePattern : Pattern
 
     public Vector2 Wave(Enemy enemy)
     {
-        Vector2 direction = -enemy.enemyBehaviour.transform.up * Time.deltaTime * speed;
-        //m_MoveVector = enemy.enemyBehaviour.transform.right * Mathf.Sin(enemy.enemyBehaviour.GetLifeTimer() * frequency) * magnitude;
-        //m_MoveVector += direction;
-        return Vector2.zero;
+        Vector2 movement = -enemy.enemyBehaviour.transform.up * Time.deltaTime * speed;
+        return CalculateWave(enemy) + movement;
     }
 
     public Vector2 Wave(BulletObject bulletObject)
     {
-        Vector2 direction = -bulletObject.transform.up * Time.deltaTime * speed;
-        //m_MoveVector = bulletObject.transform.right * Mathf.Sin(bulletObject.bullet.GetLifeTimer() * frequency) * magnitude;
-        //m_MoveVector += direction;
-        return Vector2.zero;
+        Vector2 movement = -bulletObject.transform.up * Time.deltaTime * speed;
+        return CalculateWave(bulletObject) + movement;
+    }
+
+    public Vector2 CalculateWave(Enemy enemy)
+    {
+        return enemy.enemyBehaviour.transform.right * Mathf.Sin(enemy.enemyBehaviour.GetLifeTimer() * frequency) * magnitude;
+    }
+
+    public Vector2 CalculateWave(BulletObject bulletObject)
+    {
+        return bulletObject.bullet.transform.right * Mathf.Sin(bulletObject.bullet.GetLifeTimer() * frequency) * magnitude;
     }
 }

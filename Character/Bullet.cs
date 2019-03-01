@@ -19,9 +19,8 @@ public class Bullet : MonoBehaviour
     private SpriteRenderer m_SpriteRenderer;
     private CharacterController2D m_CharacterController2D;
     private PlayerCharacter m_PlayerCharacter;
-    public Vector3 m_MoveVector;
-    public Vector2 m_Direction;
-    public Vector2 m_PlayerDirection;
+    private Vector3 m_MoveVector;
+    private Vector2 m_Direction;
     private float m_LifeTimer;                              //Starts to count when the object is enabled
 
     static readonly int VFX_HASH = VFXController.StringToHash("EnemyDeath");
@@ -34,7 +33,6 @@ public class Bullet : MonoBehaviour
     {
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         m_LifeTimer = 0.0f;
-        m_PlayerDirection = m_PlayerCharacter.transform.position ;
     }
 
     private void Awake()
@@ -75,14 +73,9 @@ public class Bullet : MonoBehaviour
         return m_LifeTimer;
     }
 
-    public Vector2 GetSettedDirection()
+    public Vector2 GetDirection()
     {
         return m_Direction.normalized;
-    }
-
-    public Vector2 GetPlayerDirection()
-    {
-        return m_PlayerDirection;
     }
 
     public void SetPattern(Pattern pattern)
@@ -90,9 +83,14 @@ public class Bullet : MonoBehaviour
         m_CurrentPattern = pattern;
     }
 
-    public void SetDirection(float degree)
+    public void SetLineDirection(float degree)
     {
         m_Direction = new Vector2(Mathf.Cos(degree * Mathf.Deg2Rad), Mathf.Sin(degree * Mathf.Deg2Rad));
+    }
+
+    public void SetPlayerDirection()
+    {
+        m_Direction = m_PlayerCharacter.transform.position;
     }
 
     public void ReturnToPool ()
@@ -100,6 +98,7 @@ public class Bullet : MonoBehaviour
         bulletPoolObject.ReturnToPool ();
     }
 
+    //Called by the Damage Events
     public void OnHitDamageable(Damager origin, Damageable damageable)
     {
         //VFXController.Instance.Trigger(VFX_HASH, transform.position, 0, m_SpriteRenderer.flipX, null);
@@ -108,6 +107,12 @@ public class Bullet : MonoBehaviour
     public void OnHitNonDamageable(Damager origin)
     {
         //VFXController.Instance.Trigger(VFX_HASH, transform.position, 0, m_SpriteRenderer.flipX, null);
+    }
+
+    //Pattern Execution
+    public void InitiazePattern()
+    {
+        m_CurrentPattern.InitializePattern(bulletPoolObject);
     }
 
     private void UpdateMovement()

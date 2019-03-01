@@ -15,8 +15,6 @@ public class EnemyBehaviour : MonoBehaviour
     public float burstGap = .4f;
     public float shootingGap = 2f;
     public bool shouldShoot = false;
-    [Range(0,359)]
-    public float shootDirection;
 
     [Header("Audio Settings")]
     public RandomAudioPlayer dieAudio;
@@ -134,6 +132,11 @@ public class EnemyBehaviour : MonoBehaviour
         m_TimeBeforeAutodestruct = time;
     }
 
+    public void SetLineDirection(float degree)
+    {
+        
+    }
+
     public void SetDestroyWhenOutScreen(bool value)
     {
         m_DestroyWhenOutOfView = value;
@@ -175,7 +178,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Shoot()
     {
-        m_CurrentBulletPool.Pop(bulletSpawnPoint.position, shootDirection, m_CurrentBulletPattern);
+        m_CurrentBulletPool.Pop(bulletSpawnPoint.position, m_CurrentBulletPattern);
     }
 
     public void Die(Damager damager, Damageable damageable)
@@ -190,14 +193,6 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (damageable.CurrentHealth <= 0)
             return;
-
-        //m_Animator.SetTrigger(m_HashHitPara);
-
-        Vector2 throwVector = new Vector2(0, 3.0f);
-        Vector2 damagerToThis = damager.transform.position - transform.position;
-
-        throwVector.x = Mathf.Sign(damagerToThis.x) * -2.0f;
-        m_MoveVector = throwVector;
 
         if (m_FlickeringCoroutine != null)
         {

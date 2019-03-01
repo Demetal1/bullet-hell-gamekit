@@ -10,51 +10,43 @@ public class PlayerCharacter : MonoBehaviour
     #endregion
 
     //References
-    [Header("Reference")]
-    public Damageable damageable;
     public SpriteRenderer spriteRenderer;
     public SpriteRenderer hitboxRenderer;
-    public ParticleSystem deathParticle;
-    public ParticleSystem spawnParticle;
+    public Damageable damageable;
     
-    [Header("Die Settings")]
+    //Hurt
     public float flickeringDuration = 0.1f;
     public Transform respawnLocation;
 
     //Speed
-    [Header("Movement Settings")]
     public float runSpeed = 5;
     public float walkSpeed = 3;
     public float dashSpeed = 5f;
     public float dashPressTime = .5f;
 
     //Shoot Settings
-    [Header("Shoot Settings")]
     public float shotsPerSecond = 1f;
     
     public Transform bulletSpawnPointLeft;
-    public Pattern leftPattern;
-    [Range(0,359)]
-    public float rotationLeft;
     public Transform bulletSpawnPointMiddle;
-    public Pattern middlePattern;
-    [Range(0,359)]
-    public float rotationMiddle;
     public Transform bulletSpawnPointRight;
-    public Pattern rightPattern;
-    [Range(0,359)]
-    public float rotationRight;
-
     public BulletPool bulletPool;
     public BulletPool bulletPool2;
     public BulletPool bulletPool3;
+    public Pattern rightPattern;
+    public Pattern middlePattern;
+    public Pattern leftPattern;
 
-    [Header("Audio Settings")]
-    public RandomAudioPlayer dieAudio;
-    public RandomAudioPlayer shootAudio;
+    //Audio Settings
+    public RandomAudioPlayer hurtAudioPlayer;
+    public RandomAudioPlayer shootAudioPlayer;
+    public RandomAudioPlayer dashAudioPlayer;
 
-    //Misc
-    [Header("Misc")]
+    //Particle Setings
+    public ParticleSystem deathParticle;
+    public ParticleSystem spawnParticle;
+
+    //Misc Settings
     public bool spriteOriginallyFacesLeft;
 
     //Animator Hashs
@@ -212,7 +204,6 @@ public class PlayerCharacter : MonoBehaviour
         VerifyShootRoutine();
         deathParticle.Play();
 
-
         spriteRenderer.enabled = false;
         hitboxRenderer.enabled = false;
         gameObject.layer = 0;
@@ -353,9 +344,12 @@ public class PlayerCharacter : MonoBehaviour
 
     protected void SpawnBullet()
     {
-        bulletPool.Pop(bulletSpawnPointLeft.position, rotationLeft, leftPattern);
-        bulletPool2.Pop(bulletSpawnPointMiddle.position, rotationMiddle, middlePattern);
-        bulletPool3.Pop(bulletSpawnPointRight.position, rotationRight, rightPattern);
+        if(bulletPool != null)
+            bulletPool.Pop(bulletSpawnPointLeft.position, leftPattern);
+        if(bulletPool2 != null)
+            bulletPool2.Pop(bulletSpawnPointMiddle.position, middlePattern);
+        if(bulletPool3 != null)
+        bulletPool3.Pop(bulletSpawnPointRight.position, rightPattern);
         //rangedAttackAudioPlayer.PlayRandomSound();
     }
 }

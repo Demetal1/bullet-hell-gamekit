@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using RPGTALK;
+using UnityEngine.Playables;
 
 public enum SectionType
 {
@@ -18,7 +20,7 @@ public class Section
     public float triggerTime;
     public SectionType type = SectionType.WAVE;
     public List<SpawnerWrapper> spawners;
-    
+    public PlayableDirector dialogue;
 
     public void StartSection()
     {
@@ -35,7 +37,7 @@ public class Section
         }
         else if(type == SectionType.DIALOGUE)
         {
-
+            dialogue.Play();
         }
         else
         {

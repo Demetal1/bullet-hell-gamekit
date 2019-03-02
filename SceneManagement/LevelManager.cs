@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.Playables;
 
 //Level timer controls the level timer, is used to trigger sections and paused when do so
 public class LevelManager : MonoBehaviour
@@ -13,8 +14,6 @@ public class LevelManager : MonoBehaviour
 
     [ReadOnly]
     public float levelTimer = 0.0f;
-    [ReadOnly]
-    public float sectionTimer = 0.0f;
 
     public Section[] sections;
 
@@ -55,35 +54,28 @@ public class LevelManager : MonoBehaviour
     {
         Debug.Log("Playing Section");
         m_SectionPlaying = true;
+        if(section.type == SectionType.DIALOGUE)
+            section.dialogue.stopped += EndSection;
         section.StartSection();
     }
-
-    /*public void PlaySection(Section section)
-    {
-        m_CurrentSectionCoroutine = StartCoroutine(PlaySectionCoroutine(section));
-    }
-
-    IEnumerator PlaySectionCoroutine(Section section)
-    {
-
-    }*/
 
     public void EndSpawning(Section section)
     {
         m_WaveCount++;
 
         if(m_WaveCount == section.spawners.Count)
-            EndSection(section);
+        {
+            m_WaveCount = 0;
+            EndSection();
+        }
     }
 
-    private void EndSection(Section section)
+    private void EndSection(PlayableDirector director = null)
     {
-        m_WaveCount = 0;
         m_SectionPlaying = false;
 
         m_CurrentSectionIndex++;
-        //ARRUMAR
-        if(m_CurrentSectionIndex < (sections.Length-1))
+        if(m_CurrentSectionIndex < sections.Length)
             m_NextSectionTime += sections[m_CurrentSectionIndex].triggerTime;
     }
 }

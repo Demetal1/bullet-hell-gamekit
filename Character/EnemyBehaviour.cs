@@ -10,11 +10,11 @@ public class EnemyBehaviour : MonoBehaviour
 
     [Header("Enemy Settings")]
     [Tooltip("The time the enemy takes to shoot")]
+    public bool shouldShoot = false;
     public bool burstShot = false;
     public int burstBullets = 5;
     public float burstGap = .4f;
     public float shootingGap = 2f;
-    public bool shouldShoot = false;
 
     [Header("Audio Settings")]
     public RandomAudioPlayer dieAudio;
@@ -33,7 +33,6 @@ public class EnemyBehaviour : MonoBehaviour
     private BulletPool m_CurrentBulletPool;
     private WaitForSeconds m_BurstBulletGap;
     private float m_NextShotTime;
-    
 
     private CharacterController2D m_CharacterController2D;
     private Vector3 m_MoveVector;

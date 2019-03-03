@@ -12,11 +12,21 @@ public class WavePattern : Pattern
     public float magnitude = 0.5f;
     public float speed = 2f;
 
-    
+    public override void InitializePattern(BulletObject objectPool)
+    {
+        objectPool.bullet.SetDegreeDirection(rotationDegrees, true);
+    }
 
     public override Vector2 CalculateMovement(Enemy enemy)
     {
         return Wave(enemy);
+    }
+
+    public Vector2 Wave(Enemy objectPool)
+    {
+        Vector2 direction = objectPool.enemyBehaviour.transform.right * Mathf.Sin(objectPool.enemyBehaviour.GetLifeTimer() * frequency) * magnitude;
+        Vector2 movement = -objectPool.enemyBehaviour.transform.up * Time.deltaTime * speed;
+        return direction + movement;
     }
 
     public override Vector2 CalculateMovement(BulletObject bullet)
@@ -24,25 +34,11 @@ public class WavePattern : Pattern
         return Wave(bullet);
     }
 
-    public Vector2 Wave(Enemy enemy)
+    public Vector2 Wave(BulletObject objectPool)
     {
-        Vector2 movement = -enemy.enemyBehaviour.transform.up * Time.deltaTime * speed;
-        return CalculateWave(enemy) + movement;
-    }
-
-    public Vector2 Wave(BulletObject bulletObject)
-    {
-        Vector2 movement = -bulletObject.transform.up * Time.deltaTime * speed;
-        return CalculateWave(bulletObject) + movement;
-    }
-
-    public Vector2 CalculateWave(Enemy enemy)
-    {
-        return enemy.enemyBehaviour.transform.right * Mathf.Sin(enemy.enemyBehaviour.GetLifeTimer() * frequency) * magnitude;
-    }
-
-    public Vector2 CalculateWave(BulletObject bulletObject)
-    {
-        return bulletObject.bullet.transform.right * Mathf.Sin(bulletObject.bullet.GetLifeTimer() * frequency) * magnitude;
+        Vector2 direction = objectPool.bullet.GetDirection();
+        Vector2 crossDirection = new Vector2(direction.normalized.y, -direction.normalized.x);
+        Vector2 movement = (direction * Mathf.Sin(objectPool.bullet.GetLifeTimer() * frequency) * magnitude) + (crossDirection * Time.deltaTime * speed);
+        return movement;
     }
 }

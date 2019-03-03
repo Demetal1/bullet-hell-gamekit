@@ -13,7 +13,7 @@ public enum PatternType
 public class Pattern : ScriptableObject
 {
     [Range(0,359)]
-    public float rotation;
+    public int rotationDegrees;
 
     public virtual void InitializePattern(Enemy enemy){}
 

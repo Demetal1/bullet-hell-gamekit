@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Damager))]
 public class Bullet : MonoBehaviour
 {
+    public SpriteRenderer spriteRenderer;
+
     public bool destroyWhenOutOfView = true;
 
     [Tooltip("If -1 never auto destroy, otherwise bullet is return to pool when that time is reached")]
@@ -16,7 +18,6 @@ public class Bullet : MonoBehaviour
     public Camera mainCamera;
 
     private Pattern m_CurrentPattern;
-    private SpriteRenderer m_SpriteRenderer;
     private CharacterController2D m_CharacterController2D;
     private PlayerCharacter m_PlayerCharacter;
     private Vector3 m_MoveVector;
@@ -31,7 +32,6 @@ public class Bullet : MonoBehaviour
     #region UnityCalls
     private void OnEnable()
     {
-        m_SpriteRenderer = GetComponent<SpriteRenderer>();
         m_LifeTimer = 0.0f;
     }
 
@@ -50,8 +50,8 @@ public class Bullet : MonoBehaviour
         if (destroyWhenOutOfView)
         {
             Vector3 screenPoint = mainCamera.WorldToViewportPoint(transform.position);
-            bool onScreen = screenPoint.z > 0 && screenPoint.x > -k_OffScreenError &&
-                            screenPoint.x < 1 + k_OffScreenError && screenPoint.y > -k_OffScreenError &&
+            bool onScreen = screenPoint.z > 0 &&
+                            screenPoint.y > -k_OffScreenError &&
                             screenPoint.y < 1 + k_OffScreenError;
             if (!onScreen)
                 bulletPoolObject.ReturnToPool();
@@ -83,7 +83,7 @@ public class Bullet : MonoBehaviour
         m_CurrentPattern = pattern;
     }
 
-    public void SetLineDirection(float degree)
+    public void SetDegreeDirection(float degree, bool toEuler = false)
     {
         m_Direction = new Vector2(Mathf.Cos(degree * Mathf.Deg2Rad), Mathf.Sin(degree * Mathf.Deg2Rad));
     }
@@ -91,6 +91,22 @@ public class Bullet : MonoBehaviour
     public void SetPlayerDirection()
     {
         m_Direction = m_PlayerCharacter.transform.position;
+    }
+
+    public void UpdateRotation(float direction)
+    {
+        spriteRenderer.transform.Rotate(spriteRenderer.transform.forward * direction);
+    }
+
+    public void UpdateRotation(Vector2 direction)
+    {
+        spriteRenderer.transform.Rotate(spriteRenderer.transform.forward * direction);
+    }
+
+    public void UpdateRotation(Vector3 euler)
+    {
+        Vector3 theta = spriteRenderer.transform.forward * Mathf.Pow(Mathf.Tan(euler.y/euler.x), -1);
+        spriteRenderer.transform.Rotate(theta);
     }
 
     public void ReturnToPool ()

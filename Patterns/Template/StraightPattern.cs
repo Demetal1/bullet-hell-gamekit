@@ -12,12 +12,12 @@ public class StraightPattern : Pattern
 
     public override void InitializePattern(BulletObject objectPool)
     {
-        objectPool.bullet.SetLineDirection(rotation);
+        objectPool.bullet.SetDegreeDirection(rotationDegrees);
     }
 
     public override void InitializePattern(Enemy enemy)
     {
-        enemy.enemyBehaviour.SetLineDirection(rotation);
+        enemy.enemyBehaviour.SetLineDirection(rotationDegrees);
     }
 
     public override Vector2 CalculateMovement(Enemy enemy)

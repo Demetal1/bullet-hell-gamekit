@@ -349,7 +349,7 @@ public class PlayerCharacter : MonoBehaviour
         if(bulletPool2 != null)
             bulletPool2.Pop(bulletSpawnPointMiddle.position, middlePattern);
         if(bulletPool3 != null)
-        bulletPool3.Pop(bulletSpawnPointRight.position, rightPattern);
+            bulletPool3.Pop(bulletSpawnPointRight.position, rightPattern);
         //rangedAttackAudioPlayer.PlayRandomSound();
     }
 }

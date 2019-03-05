@@ -11,8 +11,6 @@ public class EnemySpawner : MonoBehaviour
     
     public SectionEvent OnStopSpawning;
 
-    public bool DEBUG;
-
     [Header("Enemy Pool Settings")]
     [Tooltip("The pool of enemies")]
     public EnemyPool enemyPool;
@@ -48,6 +46,9 @@ public class EnemySpawner : MonoBehaviour
         m_TotalSpawnedEnemyCount = 0;
         m_SpawnWait = new WaitForSeconds(spawnDelay);
         m_EnemyLifeTime = new WaitForSeconds(enemyPool.timeBeforeAutodestruct);
+
+        if(SceneController.Instance.DEBUGGING)
+            StartSpawn();
     }
 
     public void StartSpawn(Vector3 position, Section section)
@@ -78,7 +79,8 @@ public class EnemySpawner : MonoBehaviour
             m_TotalSpawnedEnemyCount++;
         }
 
-        StartCoroutine(WaitForEnemiesDespawn());
+        if(!SceneController.Instance.DEBUGGING)
+            StartCoroutine(WaitForEnemiesDespawn());
         m_SpawnTimerCoroutine = null;
     }
 

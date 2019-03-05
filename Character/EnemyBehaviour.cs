@@ -63,7 +63,6 @@ public class EnemyBehaviour : MonoBehaviour
     {
         m_CharacterController2D = GetComponent<CharacterController2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
-
         m_OriginalColor = m_SpriteRenderer.color;
     }
 

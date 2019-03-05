@@ -57,6 +57,7 @@ public class PlayerCharacter : MonoBehaviour
     private bool m_CanMove;
     private bool m_IsWalking;
     private Vector2 m_MoveVector;
+
     private Vector2 m_InputVector;
     private CharacterController2D m_CharacterController2D;
     private Animator m_Animator;
@@ -64,12 +65,14 @@ public class PlayerCharacter : MonoBehaviour
     private Coroutine m_ShootingCoroutine;
     private WaitForSeconds m_FlickeringWait;
     private Coroutine m_FlickerCoroutine;
+
     private float m_ShotSpawnGap;
     private float m_NextShotTime;
     private float m_ShotTimer;
     private bool m_IsShooting;
     private bool m_StoppedShooting;
     private bool m_IsFiring;
+
     private bool m_DashFirstPress = true;
     private bool m_ResetDash;
     private float m_DashFirstPressTimer;
@@ -270,7 +273,7 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         spriteRenderer.enabled = true;
-        gameObject.layer = 11;
+        gameObject.layer = 13;
     }
 
     public void UpdateFacing()

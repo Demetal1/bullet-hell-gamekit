@@ -30,14 +30,16 @@ public class LevelManager : MonoBehaviour
     {
         s_LevelManager = this;
         m_NextSectionTime = sections[0].triggerTime;
+        if(!SceneController.Instance.DEBUGGING)
+            this.gameObject.SetActive(false);
     }
 
     private void Update()
     {
-        if(!m_SectionPlaying)
-            levelTimer += Time.deltaTime;
-        else
+        if(m_SectionPlaying)
             return;
+        else
+            levelTimer += Time.deltaTime;
 
         if(levelTimer > (m_NextSectionTime - k_Approximation) && levelTimer < (m_NextSectionTime + k_Approximation))
         {   
@@ -47,12 +49,10 @@ public class LevelManager : MonoBehaviour
             m_NextSectionTime = levelTimer;
             PlaySection(sections[m_CurrentSectionIndex]);
         }
-
     }
 
     private void PlaySection(Section section)
     {
-        Debug.Log("Playing Section");
         m_SectionPlaying = true;
         if(section.type == SectionType.DIALOGUE)
             section.dialogue.stopped += EndSection;

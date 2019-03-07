@@ -36,8 +36,6 @@ public class BossBehaviour : MonoBehaviour
             UpdateMovement();
     }
 
-
-
     private void UpdateTimers()
     {
         if (m_WaypointTimer > 0.0f)
@@ -51,7 +49,7 @@ public class BossBehaviour : MonoBehaviour
         
         if(m_Moving)
         {
-            transform.position = Vector2.SmoothDamp(transform.position, m_WaypointTarget.position, ref m_SmoothSpeed,smoothTime);
+            transform.position = Vector2.SmoothDamp(transform.position, m_WaypointTarget.position, ref m_SmoothSpeed, smoothTime);
             if(transform.position == m_WaypointTarget.position)
             {
                 m_Moving = false;

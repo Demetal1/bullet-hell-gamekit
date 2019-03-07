@@ -12,8 +12,8 @@ public class AimPlayerPattern : Pattern
 
     public override void InitializePattern(BulletObject objectPool)
     {
-        objectPool.bullet.SetPlayerDirection();
-        objectPool.bullet.UpdateRotation(rotationDegrees);
+        objectPool.bullet.SetPlayerAsTarget();
+        objectPool.bullet.UpdateRendererRotation();
     }
 
     public override Vector2 CalculateMovement(BulletObject bulletObject)

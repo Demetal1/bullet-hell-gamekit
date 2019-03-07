@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EnemyBehaviour : MonoBehaviour
 {
+    //Constants
+    const float k_OffScreenError = 0.01f;
+
     [Header("References")]
     public Damager contactDamager;
     public Transform bulletSpawnPoint;
@@ -41,21 +44,20 @@ public class EnemyBehaviour : MonoBehaviour
     private Coroutine m_FlickeringCoroutine = null;
     private Color m_OriginalColor;
 
-    private float m_LifeTimer;                              //Starts to count when the object is enabled
+    private Vector2 m_SpawnPointPosition;
     private float m_TimeBeforeAutodestruct;
     private bool m_DestroyWhenOutOfView;
     private bool m_Dead = false;
 
     static readonly int VFX_HASH = VFXController.StringToHash("EnemyDeath");
 
-    //Constants
-    const float k_OffScreenError = 0.01f;
+    public float LifeTime {get; set;}    //Starts to count when the object is enabled
 
     #region UnityCalls
     private void OnEnable()
     {
         m_NextShotTime = shootingGap;
-        m_LifeTimer = 0.0f;
+        LifeTime = 0.0f;
         m_Dead = false;
     }
 
@@ -64,6 +66,7 @@ public class EnemyBehaviour : MonoBehaviour
         m_CharacterController2D = GetComponent<CharacterController2D>();
         m_SpriteRenderer = GetComponent<SpriteRenderer>();
         m_OriginalColor = m_SpriteRenderer.color;
+        m_SpawnPointPosition = bulletSpawnPoint.position;
     }
 
     private void Start()
@@ -76,9 +79,10 @@ public class EnemyBehaviour : MonoBehaviour
         if(m_Dead)
             return;
 
-        m_LifeTimer += Time.deltaTime;
+        LifeTime += Time.deltaTime;
 
-        UpdateMovement();
+        CalculateMovement();
+        UpdateBulletSpawnPoint();
         m_CharacterController2D.Move(m_MoveVector);
 
         if (m_DestroyWhenOutOfView)
@@ -93,7 +97,7 @@ public class EnemyBehaviour : MonoBehaviour
 
         if (m_TimeBeforeAutodestruct > 0)
         {
-            if (m_LifeTimer > m_TimeBeforeAutodestruct)
+            if (LifeTime > m_TimeBeforeAutodestruct)
             {
                 enemyObject.ReturnToPool();
             }
@@ -104,11 +108,6 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     #endregion
-
-    public float GetLifeTimer()
-    {
-        return m_LifeTimer;
-    }
 
     public void SetEnemyPattern(Pattern pattern)
     {
@@ -129,12 +128,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         m_TimeBeforeAutodestruct = time;
     }
-
-    public void SetLineDirection(float degree)
-    {
-        
-    }
-
+    
     public void SetDestroyWhenOutScreen(bool value)
     {
         m_DestroyWhenOutOfView = value;
@@ -153,9 +147,9 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void CheckShootingTimer()
     {
-        if(m_LifeTimer >= m_NextShotTime)
+        if(LifeTime >= m_NextShotTime)
         {
-            m_NextShotTime = m_LifeTimer + shootingGap;
+            m_NextShotTime = LifeTime + shootingGap;
             if(burstShot)
                 StartCoroutine(Burst());
             else
@@ -176,7 +170,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     private void Shoot()
     {
-        m_CurrentBulletPool.Pop(bulletSpawnPoint.position, m_CurrentBulletPattern);
+        m_CurrentBulletPool.Pop(bulletSpawnPoint.position, transform.position, m_CurrentBulletPattern);
     }
 
     public void Die(Damager damager, Damageable damageable)
@@ -230,9 +224,20 @@ public class EnemyBehaviour : MonoBehaviour
     }
 
     //Update Enemy position based on the pattern
-    private void UpdateMovement()
+    private void CalculateMovement()
     {
         if(m_CurrentEnemyPattern != null)
             m_MoveVector = m_CurrentEnemyPattern.CalculateMovement(enemyObject);
+    }
+
+    private void UpdateBulletSpawnPoint()
+    {
+        if(!m_CurrentBulletPattern.autoRotate)
+            return;
+
+        Vector2 rotation = Vector2.zero;
+        rotation.x = Mathf.Cos(LifeTime * m_CurrentBulletPattern.rotationSpeed);
+        rotation.y = Mathf.Sin(LifeTime * m_CurrentBulletPattern.rotationSpeed);
+        bulletSpawnPoint.position = rotation;
     }
 }

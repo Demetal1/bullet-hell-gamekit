@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletPool : ObjectPool<BulletPool, BulletObject, Vector2, Pattern>
+public class BulletPool : ObjectPool<BulletPool, BulletObject, Vector2, Vector2, Pattern>
 {
     static protected Dictionary<GameObject, BulletPool> s_PoolInstances = new Dictionary<GameObject, BulletPool>();
 
@@ -35,7 +35,7 @@ public class BulletPool : ObjectPool<BulletPool, BulletObject, Vector2, Pattern>
     }
 }
 
-public class BulletObject : PoolObject<BulletPool, BulletObject, Vector2, Pattern>
+public class BulletObject : PoolObject<BulletPool, BulletObject, Vector2, Vector2, Pattern>
 {
     public Transform transform;
     public Rigidbody2D rigidbody2D;
@@ -52,11 +52,12 @@ public class BulletObject : PoolObject<BulletPool, BulletObject, Vector2, Patter
         bullet.mainCamera = Object.FindObjectOfType<Camera> ();
     }
 
-    public override void WakeUp(Vector2 position, Pattern pattern)
+    public override void WakeUp(Vector2 position, Vector2 shooterPosition, Pattern pattern)
     {
         transform.position = position;
         bullet.SetPattern(pattern);
-        bullet.InitiazePattern();
+        bullet.SetOriginPosition(shooterPosition);
+        bullet.InitializePattern();
         instance.SetActive(true);
     }
 

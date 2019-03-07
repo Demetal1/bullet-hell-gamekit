@@ -5,10 +5,12 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Damager))]
 public class Bullet : MonoBehaviour
 {
+    //Constants
+    const float k_OffScreenError = 0.01f;
+
     public SpriteRenderer spriteRenderer;
 
     public bool destroyWhenOutOfView = true;
-
     [Tooltip("If -1 never auto destroy, otherwise bullet is return to pool when that time is reached")]
     public float timeBeforeAutodestruct = -1.0f;
 
@@ -22,17 +24,19 @@ public class Bullet : MonoBehaviour
     private PlayerCharacter m_PlayerCharacter;
     private Vector3 m_MoveVector;
     private Vector2 m_Direction;
-    private float m_LifeTimer;                              //Starts to count when the object is enabled
+    private Vector2 m_TargetPosition;
+    private Vector3 m_OriginPosition;
+    private float m_RotationVelocity;
 
     static readonly int VFX_HASH = VFXController.StringToHash("EnemyDeath");
 
-    //Constants
-    const float k_OffScreenError = 0.01f;
+    public float LifeTime {get; set;}    //Starts to count when the object is enabled
 
     #region UnityCalls
     private void OnEnable()
     {
-        m_LifeTimer = 0.0f;
+        LifeTime = 0.0f;
+        m_MoveVector = Vector2.zero;
     }
 
     private void Awake()
@@ -43,8 +47,10 @@ public class Bullet : MonoBehaviour
 
     void FixedUpdate ()
     {
-        m_LifeTimer += Time.deltaTime;
-        UpdateMovement();
+        LifeTime += Time.deltaTime;
+
+        CalculateMovement();
+
         m_CharacterController2D.Move(m_MoveVector);
 
         if (destroyWhenOutOfView)
@@ -59,7 +65,7 @@ public class Bullet : MonoBehaviour
 
         if (timeBeforeAutodestruct > 0)
         {
-            if (m_LifeTimer > timeBeforeAutodestruct)
+            if (LifeTime > timeBeforeAutodestruct)
             {
                 bulletPoolObject.ReturnToPool();
             }
@@ -68,50 +74,40 @@ public class Bullet : MonoBehaviour
 
     #endregion
 
-    public float GetLifeTimer()
-    {
-        return m_LifeTimer;
-    }
-
     public Vector2 GetDirection()
     {
-        return m_Direction.normalized;
+        return m_Direction;
     }
 
-    public void SetPattern(Pattern pattern)
-    {
-        m_CurrentPattern = pattern;
-    }
-
-    public void SetDegreeDirection(float degree, bool toEuler = false)
+    public void SetDegreeDirection(float degree)
     {
         m_Direction = new Vector2(Mathf.Cos(degree * Mathf.Deg2Rad), Mathf.Sin(degree * Mathf.Deg2Rad));
     }
 
-    public void SetPlayerDirection()
+    public void SetTargetDirection(Vector3 target)
     {
-        m_Direction = m_PlayerCharacter.transform.position;
+        m_Direction = target - transform.position;
     }
 
-    public void UpdateRotation(float direction)
+    public void SetOriginTarget()
     {
-        spriteRenderer.transform.Rotate(spriteRenderer.transform.forward * direction);
+        m_Direction = transform.position - m_OriginPosition;
     }
 
-    public void UpdateRotation(Vector2 direction)
+    //non-normalized means that the value will increase as far as the target is
+    //and a normalized value will only express the direction no matter the distance
+    public void SetPlayerAsTarget(bool normalize = false)
     {
-        spriteRenderer.transform.Rotate(spriteRenderer.transform.forward * direction);
+        if(m_CurrentPattern.normalizedSpeed)
+            m_Direction = (m_PlayerCharacter.transform.position - transform.position).normalized;
+        else
+            m_Direction = m_PlayerCharacter.transform.position - transform.position;
     }
 
-    public void UpdateRotation(Vector3 euler)
+    //updates the sprite rotation
+    public void UpdateRendererRotation()
     {
-        Vector3 theta = spriteRenderer.transform.forward * Mathf.Pow(Mathf.Tan(euler.y/euler.x), -1);
-        spriteRenderer.transform.Rotate(theta);
-    }
-
-    public void ReturnToPool ()
-    {
-        bulletPoolObject.ReturnToPool ();
+        spriteRenderer.transform.up = m_Direction;
     }
 
     //Called by the Damage Events
@@ -125,13 +121,30 @@ public class Bullet : MonoBehaviour
         //VFXController.Instance.Trigger(VFX_HASH, transform.position, 0, m_SpriteRenderer.flipX, null);
     }
 
-    //Pattern Execution
-    public void InitiazePattern()
+    //Pool methods
+    public void SetPattern(Pattern pattern)
+    {
+        m_CurrentPattern = pattern;
+    }
+
+    //subtracts the bullet spawn position with the shooter position to find out which direction he shooted
+    public void SetOriginPosition(Vector3 origin)
+    {
+        m_OriginPosition = origin;
+    }
+
+    public void InitializePattern()
     {
         m_CurrentPattern.InitializePattern(bulletPoolObject);
     }
 
-    private void UpdateMovement()
+    public void ReturnToPool ()
+    {
+        bulletPoolObject.ReturnToPool ();
+    }
+
+    //Calculations based on the pattern
+    private void CalculateMovement()
     {
         m_MoveVector = m_CurrentPattern.CalculateMovement(bulletPoolObject);
     }

@@ -13,6 +13,12 @@ public class CircularPattern : Pattern
     [Tooltip("positive to move clockwise, negative to move counter-clockwise")]
     public int speed = 1;
 
+    public override void InitializePattern(BulletObject objectPool)
+    {
+        if(aimWithRotation)
+            objectPool.bullet.SetOriginTarget();
+    }
+
     public override Vector2 CalculateMovement(Enemy enemy)
     {
         return Circular(enemy);
@@ -25,11 +31,11 @@ public class CircularPattern : Pattern
 
     private float CalculateX(Enemy enemy)
     {
-        return Mathf.Cos(enemy.enemyBehaviour.GetLifeTimer()) * width;
+        return Mathf.Cos(enemy.enemyBehaviour.LifeTime) * width;
     }
 
     private float CalculateY(Enemy enemy)
     {
-        return Mathf.Sin(enemy.enemyBehaviour.GetLifeTimer()) * height;
+        return Mathf.Sin(enemy.enemyBehaviour.LifeTime) * height;
     }
 }

@@ -12,8 +12,14 @@ public enum PatternType
 
 public class Pattern : ScriptableObject
 {
+    [Header("Properties")]
+    public bool autoRotate;
+    public bool aimWithRotation;
+    public float rotationSpeed = 1f;
     [Range(0,359)]
-    public int rotationDegrees;
+    public int startRotation;
+    public int rotateFor = 360;
+    public bool normalizedSpeed;
 
     public virtual void InitializePattern(Enemy enemy){}
 

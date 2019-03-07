@@ -209,7 +209,7 @@ public class PlayerCharacter : MonoBehaviour
 
         spriteRenderer.enabled = false;
         hitboxRenderer.enabled = false;
-        gameObject.layer = 0;
+        gameObject.layer = 13;
 
         damageable.EnableInvulnerability(true);
         yield return new WaitForSeconds(2.0f); //wait one second before respawing
@@ -273,7 +273,7 @@ public class PlayerCharacter : MonoBehaviour
         }
 
         spriteRenderer.enabled = true;
-        gameObject.layer = 13;
+        gameObject.layer = 11;
     }
 
     public void UpdateFacing()
@@ -347,12 +347,12 @@ public class PlayerCharacter : MonoBehaviour
 
     protected void SpawnBullet()
     {
-        if(bulletPool != null)
+        /* if(bulletPool != null)
             bulletPool.Pop(bulletSpawnPointLeft.position, leftPattern);
         if(bulletPool2 != null)
             bulletPool2.Pop(bulletSpawnPointMiddle.position, middlePattern);
         if(bulletPool3 != null)
-            bulletPool3.Pop(bulletSpawnPointRight.position, rightPattern);
+            bulletPool3.Pop(bulletSpawnPointRight.position, rightPattern); */
         //rangedAttackAudioPlayer.PlayRandomSound();
     }
 }

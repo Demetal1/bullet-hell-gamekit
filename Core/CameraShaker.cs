@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class CameraShaker : MonoBehaviour
 {
+    #region Singleton
     static protected CameraShaker s_Instance = null;
 
-
-    protected Vector3 m_LastVector;
-    protected float m_SinceShakeTime = 0.0f;
-    protected float m_ShakeIntensity = 0.2f;
-
+    
     private void OnEnable()
     {
         s_Instance = this;
     }
+    #endregion
+
+    protected Vector3 m_LastVector;
+    protected float m_SinceShakeTime = 0.0f;
+    protected float m_ShakeIntensity = 0.2f;
 
     private void OnPreRender()
     {
@@ -33,8 +35,6 @@ public class CameraShaker : MonoBehaviour
             m_SinceShakeTime -= Time.deltaTime;
         }
     }
-
-
 
     static public void Shake(float amount, float time)
     {

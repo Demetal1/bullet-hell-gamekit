@@ -73,9 +73,13 @@ public class PlayerCharacter : MonoBehaviour
     private bool m_StoppedShooting;
     private bool m_IsFiring;
 
-    private bool m_DashFirstPress = true;
+    private int m_DashFirstPress = 0;
     private bool m_ResetDash;
     private float m_DashFirstPressTimer;
+
+    public float groundAcceleration = 100f;
+    public float groundDeceleration = 100f;
+    public int chainDashFrame = 20;
 
     private void Awake()
     {
@@ -104,31 +108,44 @@ public class PlayerCharacter : MonoBehaviour
         m_StoppedShooting = Input.GetKeyUp(KeyCode.Z);
 
         if(Input.GetKeyDown(KeyCode.RightArrow)) 
-            CheckForDash();
+            CheckForDash(true);
         else if(Input.GetKeyDown(KeyCode.LeftArrow))
             CheckForDash();
 
-        if(m_ResetDash) 
+        if(m_ResetDash)
         {
-            m_DashFirstPress = false;
+            Debug.Log("Reseting");
+            m_DashFirstPress = 0;
             m_ResetDash = false;
         }
-
+            
         CheckAndFireGun();
     }
 
-    public void CheckForDash()
+    public void CheckForDash(bool right = false)
     {
-        if(m_DashFirstPress)
+        if(m_DashFirstPress != 0)
         {
             if(Time.time - m_DashFirstPressTimer < dashPressTime)
-                Dash();
-
+            {
+                if(right && m_DashFirstPress == 1)
+                {
+                    Dash();
+                }
+                else if(!right && m_DashFirstPress == -1)
+                {
+                    Dash();
+                }
+            }
             m_ResetDash = true;
         }
         else
         {
-            m_DashFirstPress = true;
+            if(right)
+                m_DashFirstPress = 1;
+            else
+                m_DashFirstPress = -1;
+
             m_DashFirstPressTimer = Time.time;
         }
     }
@@ -175,16 +192,34 @@ public class PlayerCharacter : MonoBehaviour
 
         if(m_IsWalking)
         {
-            m_MoveVector = m_InputVector.normalized * walkSpeed;
+            CalculateHorizontal(walkSpeed);
+            CalculateVertical(walkSpeed);
+            //m_MoveVector = m_InputVector.normalized * walkSpeed;
             hitboxRenderer.enabled = true;
         }
         else
         {
-            m_MoveVector = m_InputVector.normalized * runSpeed;
+            CalculateHorizontal(runSpeed);
+            CalculateVertical(walkSpeed);
+            //m_MoveVector = m_InputVector.normalized * runSpeed;
             hitboxRenderer.enabled = false;
         }
 
         m_CharacterController2D.Move(m_MoveVector * Time.deltaTime);
+    }
+
+    private void CalculateHorizontal(float speed)
+    {
+        float desiredSpeed = m_InputVector.x != 0 ? m_InputVector.x * speed : 0f;
+        float acceleration = m_InputVector.x != 0 ? groundAcceleration : groundDeceleration;
+        m_MoveVector.x = Mathf.MoveTowards(m_MoveVector.x, desiredSpeed, acceleration * Time.deltaTime);
+    }
+    
+    private void CalculateVertical(float speed)
+    {
+        float desiredSpeed = m_InputVector.y != 0 ? m_InputVector.y * speed : 0f;
+        float acceleration = m_InputVector.y != 0 ? groundAcceleration : groundDeceleration;
+        m_MoveVector.y = Mathf.MoveTowards(m_MoveVector.y, desiredSpeed, acceleration * Time.deltaTime);
     }
 
     public void SetReadInput(bool value)
@@ -306,7 +341,7 @@ public class PlayerCharacter : MonoBehaviour
     public void Dash()
     {
         Debug.Log("Dashing");
-        SetHorizontalMovement(dashSpeed);
+        SetHorizontalMovement(dashSpeed * m_DashFirstPress);
     }
 
     public void CheckAndFireGun()

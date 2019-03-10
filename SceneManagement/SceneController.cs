@@ -47,10 +47,16 @@ public class SceneController : MonoBehaviour
         get { return Instance.m_Transitioning; }
     }
 
+    public static int CharacterIndex
+    {
+        get { return Instance.m_CharacterIndex; }
+    }
+
     public bool DEBUGGING = false;
 
     protected Scene m_CurrentZoneScene;
     protected bool m_Transitioning;
+    protected int m_CharacterIndex;
     
     void Awake()
     {
@@ -61,19 +67,6 @@ public class SceneController : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
-
-
-        /*if (initialSceneTransitionDestination != null)
-        {
-            ScreenFader.SetAlpha(1f);
-            StartCoroutine(ScreenFader.FadeSceneIn());
-            initialSceneTransitionDestination.OnReachDestination.Invoke();
-        }
-        else
-        {
-            m_CurrentZoneScene = SceneManager.GetActiveScene();
-            m_ZoneRestartDestinationTag = SceneTransitionDestination.DestinationTag.A;
-        }*/
     }
 
     /// <summary>
@@ -153,5 +146,10 @@ public class SceneController : MonoBehaviour
     public string GetCurrentSceneName()
     {
         return m_CurrentZoneScene.name;
+    }
+
+    public void SetCharacterIndex(int index)
+    {
+        m_CharacterIndex = index;
     }
 }

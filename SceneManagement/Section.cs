@@ -28,7 +28,6 @@ public class Section
         {
             if(spawners.Count > 0)
             {
-                Debug.Log("Spawning");
                 for(int i = 0; i < spawners.Count; i++)
                 {
                     spawners[i].Spawn(this);

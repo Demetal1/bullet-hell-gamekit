@@ -14,6 +14,9 @@ public class LevelManager : MonoBehaviour
 
     [ReadOnly]
     public float levelTimer = 0.0f;
+    public GameObject[] characters;
+
+    [Header("Sections")]
 
     public Section[] sections;
 
@@ -26,12 +29,15 @@ public class LevelManager : MonoBehaviour
     //Constants
     const double k_Approximation = 0.1f;
 
-    private void Start() 
+    private void Awake() 
     {
         s_LevelManager = this;
         m_NextSectionTime = sections[0].triggerTime;
-        if(!SceneController.Instance.DEBUGGING)
-            this.gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        characters[SceneController.CharacterIndex].SetActive(true);
     }
 
     private void Update()

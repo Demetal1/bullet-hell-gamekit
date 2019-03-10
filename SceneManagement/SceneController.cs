@@ -103,18 +103,11 @@ public class SceneController : MonoBehaviour
     {
         m_Transitioning = true;
         
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(false);
         yield return StartCoroutine(ScreenFader.FadeSceneOut(ScreenFader.FadeType.Loading));
         yield return SceneManager.LoadSceneAsync(newSceneName);
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(false);
         
         yield return StartCoroutine(ScreenFader.FadeSceneIn());
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(true);
-        LevelManager.Instance.gameObject.SetActive(true);
-
+        LevelManager.Instance.enabled = true;
         m_Transitioning = false;
     }
 
@@ -123,17 +116,11 @@ public class SceneController : MonoBehaviour
     {
         m_Transitioning = true;
         
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(false);
         yield return StartCoroutine(ScreenFader.FadeSceneOut(ScreenFader.FadeType.Loading));
         yield return SceneManager.LoadSceneAsync(newSceneIndex);
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(false);
         
         yield return StartCoroutine(ScreenFader.FadeSceneIn());
-        if(PlayerCharacter.PlayerInstance != null)
-            PlayerCharacter.PlayerInstance.SetReadInput(true);
-
+        LevelManager.Instance.enabled = true;
         m_Transitioning = false;
     }
 
